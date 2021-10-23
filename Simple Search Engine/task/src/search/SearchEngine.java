@@ -13,33 +13,51 @@ public class SearchEngine {
     private String inputNumberPeople;
     private String inputSearchElement;
     private String inputNumberQueries;
+    private String choices;
+
 
     private List<String> listOfPeople = new ArrayList<String>();
 
     Scanner sc = new Scanner(System.in);
 
-    public void run(){
+    public void runMenu(){
 
-        System.out.println("Enter the number of people:");
-        inputNumberPeople = sc.nextLine();
+        collectData();
 
-        System.out.println("Enter all people:");
+        while(true) {
 
-        for(int i=0; i < Integer.parseInt(inputNumberPeople); i++){
+            System.out.println("=== Menu ===\n" +
+                    "1. Find a person\n" +
+                    "2. Print all people\n" +
+                    "0. Exit");
 
-            listOfPeople.add(sc.nextLine());
+            choices = sc.nextLine();
+
+            switch (choices) {
+
+                case "1":
+                    find();
+                    break;
+                case "2":
+                    printAll();
+                    break;
+                case "0":
+                    System.out.println();
+                    System.exit(0);
+
+            }
+
         }
 
-        System.out.println("Enter the number of search queries");
-        inputNumberQueries = sc.nextLine();
 
-        for(int i=0; i < Integer.parseInt(inputNumberQueries); i++){
 
-            System.out.println("Enter data to search people:");
+    }
+
+    public void find(){
+
+            System.out.println("Enter a name or email to search all suitable people.");
             inputSearchElement = sc.nextLine();
             outputResults(searchStringInList(listOfPeople, inputSearchElement));
-        }
-
 
     }
 
@@ -57,6 +75,28 @@ public class SearchEngine {
             System.out.println("Found people:");
             results.forEach(result -> System.out.println(result));
         }
+
+    }
+
+    public void printAll(){
+
+        System.out.println("=== List of people ===");
+        listOfPeople.forEach(el -> System.out.println(el));
+
+    }
+
+    public void collectData(){
+
+        System.out.println("Enter the number of people:");
+        inputNumberPeople = sc.nextLine();
+
+        System.out.println("Enter all people:");
+
+        for(int i=0; i < Integer.parseInt(inputNumberPeople); i++){
+
+            listOfPeople.add(sc.nextLine());
+        }
+
 
     }
 
