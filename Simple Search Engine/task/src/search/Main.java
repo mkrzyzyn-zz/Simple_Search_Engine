@@ -3,9 +3,7 @@ package search;
 public class Main {
     public static void main(String[] args) {
 
-        SearchEngine se = new SearchEngine();
+        SearchEngine se = new SearchEngine(args);
         se.runMenu();
-
-        //System.out.println("Hello World!");
     }
 }
