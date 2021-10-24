@@ -4,35 +4,35 @@ import org.w3c.dom.ls.LSOutput;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SearchEngine {
 
-    private String inputNumberPeople;
     private String inputSearchElement;
-    private String inputNumberQueries;
+
     private String choices;
 
     public SearchEngine(String[] args) {
         this.args = args;
     }
 
-    private final String[] args;
+    private String[] args;
 
+    private List<String> listOfPeople = new ArrayList<>();
+    private List<String[]> listOfPeopleSplit = new ArrayList<>();
+    private List<List<String>> listOfPeopleSplit2 = new ArrayList<>();
+    private Map<String, List<Integer>> mapOfPeople = new HashMap<>();
+    private List<String> results = new ArrayList<>();
 
-    private final List<String> listOfPeople = new ArrayList<>();
 
     Scanner sc = new Scanner(System.in);
 
     public void runMenu() {
 
-        // collectData();
-
         readFile(args);
+
+        prepareIndex();
 
         while (true) {
 
@@ -46,7 +46,7 @@ public class SearchEngine {
             switch (choices) {
 
                 case "1":
-                    find();
+                    outputResults(findInvertedIndex());
                     break;
                 case "2":
                     printAll();
@@ -59,14 +59,51 @@ public class SearchEngine {
 
         }
 
-
     }
 
-    public void find() {
+  /*  public void find() {
 
         System.out.println("Enter a name or email to search all suitable people.");
         inputSearchElement = sc.nextLine();
         outputResults(searchStringInList(listOfPeople, inputSearchElement));
+
+    }*/
+
+    public List<String> findInvertedIndex() {
+
+        System.out.println("Enter a name or email to search all suitable people.");
+        inputSearchElement = sc.nextLine();
+
+        if(mapOfPeople.get(inputSearchElement)!= null) {
+            results = mapOfPeople.get(inputSearchElement).stream()
+                    .map(el -> listOfPeople.get(el))
+                    .collect(Collectors.toList());
+        }
+        return results;
+
+    }
+
+    public void prepareIndex() {
+
+        listOfPeopleSplit = listOfPeople.stream().map(el -> el.split(" ")).collect(Collectors.toList());
+
+        listOfPeopleSplit2 = listOfPeopleSplit.stream().map(el -> Arrays.asList(el)).collect(Collectors.toList());
+
+        for (int i = 0; i < listOfPeopleSplit2.size(); i++) {
+
+            for (int j = 0; j < listOfPeopleSplit2.get(i).size(); j++) {
+
+                List<Integer> tempList = new ArrayList<>();
+
+                if ( mapOfPeople.get(listOfPeopleSplit2.get(i).get(j)) != null) {
+                    tempList = mapOfPeople.get(listOfPeopleSplit2.get(i).get(j));
+                }
+                tempList.add(i);
+                mapOfPeople.put(listOfPeopleSplit2.get(i).get(j), tempList);
+
+            }
+
+        }
 
     }
 
@@ -94,24 +131,11 @@ public class SearchEngine {
 
     }
 
-    public void collectData() {
-
-        System.out.println("Enter the number of people:");
-        inputNumberPeople = sc.nextLine();
-
-        System.out.println("Enter all people:");
-
-        for (int i = 0; i < Integer.parseInt(inputNumberPeople); i++) {
-
-            listOfPeople.add(sc.nextLine());
-        }
-    }
-
     public void readFile(String[] parameters) {
 
-        String fileName="";
+        String fileName = "";
 
-        if (parameters[0].equals("--data")){
+        if (parameters[0].equals("--data")) {
             fileName = parameters[1];
         }
 
